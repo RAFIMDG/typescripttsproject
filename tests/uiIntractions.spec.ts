@@ -61,6 +61,16 @@ test('Test case 1: Language filter → Java T1 11',async ({page}) =>{
     const radios = await page.getByRole('radio',{name:'Java'})
     await radios.check()
     await expect(radios).toBeChecked()
+    const items = await page.getByText('Java')
+    const row = await page.locator('#courses_table tbody tr:visible');
+    const rowCount = await row.count()
+    for(let i=0;i<rowCount;i++){
+        const language = row.nth(i).locator('td[data-col="language"]');
+        const languageText = await language.innerText();
+        console.log(`languege : ${languageText}`)
+        await expect(language).toHaveText('Java')
+    }
+    console.log(`visible: ${rowCount}`)
 })
 
 test('Test case 2: Level filter → Beginner only 11', async ({page}) =>{
@@ -74,4 +84,10 @@ test('Test case 2: Level filter → Beginner only 11', async ({page}) =>{
     await expect(beginner).toBeChecked({checked:true});
     await expect(intermediate).toBeChecked({checked:false})
     await expect(advanced).toBeChecked({checked:false})
+    const levelBeginner = await page.locator('#courses_table tbody tr:visible')
+    console.log(`LevelBeginners : ${await levelBeginner.count()}`)
+    for(let i=0; i<levelBeginner.count();i++){
+        const beginner = levelBeginner.nth(i).locator('td[data-col="level"]')
+        await expect(beginner).toHaveText('Beginner')
+    }
 })
